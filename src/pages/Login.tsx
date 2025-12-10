@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -22,16 +22,15 @@ const Login = () => {
     setIsLoading(true);
     setError('');
 
-    try {
-      const success = await login(formData.email, formData.password);
-      if (success) {
-        navigate(from, { replace: true });
-      }
-    } catch (err) {
-      setError('Invalid email or password');
-    } finally {
-      setIsLoading(false);
+    const result = await login(formData.email, formData.password);
+    
+    if (result.success) {
+      navigate(from, { replace: true });
+    } else {
+      setError(result.error || 'Login failed');
     }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -97,9 +96,16 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors"
+              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center"
             >
-              {isLoading ? 'Signing In...' : 'Sign In'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </form>
 
@@ -110,12 +116,6 @@ const Login = () => {
                 Sign up here
               </Link>
             </p>
-          </div>
-
-          <div className="mt-4 text-center">
-            <Link to="#" className="text-sm text-gray-400 hover:text-white">
-              Forgot your password?
-            </Link>
           </div>
         </div>
       </div>

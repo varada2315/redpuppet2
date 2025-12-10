@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Briefcase, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Signup = () => {
@@ -38,16 +38,15 @@ const Signup = () => {
     setIsLoading(true);
     setError('');
 
-    try {
-      const success = await signup(formData.name, formData.email, formData.password, formData.role);
-      if (success) {
-        navigate('/feed');
-      }
-    } catch (err) {
-      setError('Failed to create account. Please try again.');
-    } finally {
-      setIsLoading(false);
+    const result = await signup(formData.name, formData.email, formData.password, formData.role);
+    
+    if (result.success) {
+      navigate('/feed');
+    } else {
+      setError(result.error || 'Signup failed');
     }
+    
+    setIsLoading(false);
   };
 
   return (
@@ -61,7 +60,7 @@ const Signup = () => {
               className="h-20 w-auto"
             />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Join Us</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Join RedPuppet</h1>
           <p className="text-gray-400">Create your filmmaker profile today</p>
         </div>
 
@@ -110,8 +109,9 @@ const Signup = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  minLength={6}
                   className="w-full bg-black border border-gray-700 rounded-lg pl-12 pr-12 py-3 text-white placeholder-gray-500 focus:border-red-600 focus:outline-none transition-colors"
-                  placeholder="Create a password"
+                  placeholder="Create a password (min 6 characters)"
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
                 />
@@ -148,9 +148,16 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors"
+              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-800 disabled:cursor-not-allowed text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center"
             >
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin h-5 w-5 mr-2" />
+                  Creating Account...
+                </>
+              ) : (
+                'Create Account'
+              )}
             </button>
           </form>
 
