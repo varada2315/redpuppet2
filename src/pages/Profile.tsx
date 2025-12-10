@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Edit3, MapPin, Calendar, Award, Upload, Video, Image as ImageIcon, Save, X, Loader2 } from 'lucide-react';
+import { Camera, CreditCard as Edit3, MapPin, Calendar, Award, Upload, Video, Image as ImageIcon, Save, X, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
